@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.LinkedList; 
 import java.util.Queue;
+import java.util.Stack;
 
 public class sortit {
     public static void main(String[] args) {
@@ -10,17 +11,22 @@ public class sortit {
         Queue<String> list0 = new LinkedList<String>();
         Queue<String> list1 = new LinkedList<String>();
         Queue<String> currQ = new LinkedList<String>();
+        Stack<String> reversedQueue = new Stack<String>();
         
         Scanner input = new Scanner(System.in);
         String newItem = "", rear = "", userInput = "";
         String currentFront = "", alternateFront = ""; //representing the front of the current queue and also the second queue
         int list0Length, list1Length;
+        boolean reverseOrder = false;
 
         currQ = list0; //initializing currQ
         if (args.length != 0) { //collect all filenames from args array
             for (int i = 0; i < args.length; i++) { //collects user input from given files or manual entry
             //below lines get user input
-                if (args[i].equals("-")) {
+                if (args[i].equals("-r")) {
+                    reverseOrder = true;
+                }
+                else if (args[i].equals("-")) {
                     while(!userInput.equals("q") && !userInput.equals("Q")) {
                         System.out.print("Enter a word or 'q' to exit: ");
                         userInput = input.nextLine();
@@ -71,11 +77,11 @@ public class sortit {
         input.close(); //closing Scanner
 
 
-        /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
+/* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
         //Queue sorting process
 
-        //end loop once one queue is empty
-        while(list0.size() != 0 && list1.size() != 0) {
+        //end loop when ONE queue is empty
+        while(!list0.isEmpty() && !list1.isEmpty()) {
 
             rear = ""; //reinitialize rear when switching to new Queue
             currQ = list0;
@@ -187,10 +193,23 @@ public class sortit {
             }
         }
 
-        currQ = (list0.size() == 0) ? list1 : list0;
+/* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
-        while(currQ.size() != 0) {
-            System.out.println(list0.remove() + " ");
+        currQ = (list0.size() == 0) ? list1 : list0;
+        //print Queue in reversed order if user specified
+        if(reverseOrder == true) {
+
+            while (!currQ.isEmpty()) {
+                reversedQueue.push(currQ.remove());
+            }
+            while(reversedQueue.size() != 0) {
+                System.out.println(reversedQueue.pop() + " ");
+            }
+        }
+        else {
+            while(currQ.size() != 0) {
+                System.out.println(list0.remove() + " ");
+            }
         }
     }
 }
