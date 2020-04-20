@@ -3,29 +3,41 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.LinkedList; 
+import java.util.Queue;
 
 public class sortit {
     public static void main(String[] args) {
 
-        Queue<String> list0 = new LinkedQueue<String>();
-        Queue<String> list1 = new LinkedQueue<String>();
-        Queue<String> currQ = new LinkedQueue<String>();
+        Queue<String> list0 = new LinkedList<String>();
+        Queue<String> list1 = new LinkedList<String>();
+        Queue<String> currQ = new LinkedList<String>();
+        Queue<String> ulteriorQ = new LinkedList<String>();
+        
         Scanner input = new Scanner(System.in);
         String newItem = "", rear = "", userInput = "";
+        int sameList; //integer boolean.
         //Scanner input = new Scanner(System.in);
 
-       if (args.length != 0) { //collect all filenames from args array
         currQ = list0; //initializing currQ
+        if (args.length != 0) { //collect all filenames from args array
             for (int i = 0; i < args.length; i++) { //collects user input from given files or manual entry
-                //below lines get user input
-                if (args[i].equals("-")){
+            //below lines get user input
+                if (args[i].equals("-")) {
                     while(!userInput.equals("q")) {
                         System.out.print("Enter a word or 'q' to exit: ");
                         userInput = input.nextLine();
-                        if(!userInput.equals("q") && !userInput.equals("")) {
 
-                            currQ = (newItem.compareTo(rear) < 0) ? list0 : list1; //ternary operatot to switch lists when newItem is less than the rear elemnt of currQ
-                            currQ.insert(userInput);
+                        if(!userInput.equals("q") && !userInput.equals("")) {
+                            //currQ = (newItem.compareTo(rear) < 0) ? list0 : list1; //ternary operatot to switch lists when newItem is less than the rear elemnt of currQ
+                            if (newItem.compareTo(rear) < 0) {
+                                if(currQ == list0) {
+                                    currQ = list1;
+                                }
+                                else {
+                                    currQ = list0;
+                                }
+                            }
+                            currQ.add(userInput);
 
                             rear = userInput;
                         }
@@ -34,41 +46,166 @@ public class sortit {
                 else {
                     try {
                         Scanner fileLengthScan = new Scanner (new File(args[i]));
+                        //currQ = list0;
                         while(fileLengthScan.hasNext()) {
                             newItem = fileLengthScan.next();
-    
-                            currQ = (newItem.compareTo(rear) < 0) ? list0 : list1; //ternary operatot to switch lists when newItem is less than the rear elemnt of currQ
-                            currQ.insert(newItem);
-    
+
+                            //currQ = (newItem.compareTo(rear) < 0) ? list1 : list0; //ternary operatot to switch lists when newItem is less than the rear elemnt of currQ
+                            if (newItem.compareTo(rear) < 0) {
+                                if(currQ == list0) {
+                                    currQ = list1;
+                                }
+                                else {
+                                    currQ = list0;
+                                }
+                            }
+                            currQ.add(newItem);
+
                             rear = newItem;
                         }
-                        //SortInput(fileLengthScan);
                     }
                     catch (FileNotFoundException e) {
-                        System.out.println("FileNotFoundException caught");
+                        System.out.println("FileNotFoundException caught for '" + args[i] + "'");
                     }
                 }
-                
             } 
         }
 
+
+        /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
+        //Queue sorting process
+        String back = "", currentFront = "", alternateFront = ""; //representing the front of the current queeu and also the second Queue
+        int list0Length, list1Length, totalLength;
+
+        list0Length = list0.size();
+        list1Length = list1.size();
+        totalLength = list0Length + list1Length;
+        currQ = list0;
+
+        //end loop once one queue is empty
+        while(list0.size() != 0 && list1.size() != 0) {
+
+            rear = ""; //reinitialize rear when switching to new Queue
+            currQ = list0;
+            list0Length = list0.size();
+            list1Length = list1.size();
+
+            //while at least one queue's original length is not 0
+            while(list0Length > 0 || list1Length > 0) {
+                if (list0Length == 0) { //if length of list0 is 0 take only elements from list1
+                    //currQ = list1;
+                    currentFront = list1.remove();
+
+                    if (currentFront.compareTo(rear) > 0) {
+                        rear = currentFront;
+                        currQ.add(rear);
+                    }
+                    else {
+                        currQ = (currQ == list1) ? list0 : list1;
+                        rear = currentFront;
+                        currQ.add(rear);
+                    }
+
+                    list1Length--;
+                }
+                else if (list1Length == 0) { //if length of list1 is 0 take only elements from list0
+                    //currQ = list0;
+                    currentFront = list0.remove();
+
+                    if (currentFront.compareTo(rear) > 0) {
+                        rear = currentFront;
+                        currQ.add(rear);
+                    }
+                    else {
+                        currQ = (currQ == list1) ? list0 : list1;
+                        rear = currentFront;
+                        currQ.add(rear);
+                    }
+                    list0Length--;
+                }
+                else {
+                    currentFront = currQ.peek();
+                    alternateFront = (currQ == list0) ? list1.peek() : list0.peek();
+
+                    //if current front is greater than rear AND if second front is greater than rear
+                    //dequeue SMALLER from specified queue and enqeueu it to currQ
+                    if (currentFront.compareTo(rear) > 0 && alternateFront.compareTo(rear) > 0) {
+                        if(currentFront.compareTo(alternateFront) < 0) {
+                            rear = currQ.remove();
+                            currQ.add(rear);
+                            if(list0Length > 0 && list1Length > 0) {
+                            //decrement appropriate queue size
+                                if(currQ == list0) {
+                                    list0Length--;
+                                }
+                                else {
+                                    list1Length--;
+                                }
+                            }
+                        }
+                        else {
+                            rear = (currQ == list0) ? list1.remove() : list0.remove();
+                            currQ.add(rear);
+                            if(list0Length > 0 && list1Length > 0) {
+                            //decrement appropriate queue size
+                                if(currQ == list0) {
+                                    list1Length--;
+                                }
+                                else {
+                                    list0Length--;
+                                }
+                            }
+                        }   
+                    }
+                    //if current front is greater than rear
+                    //dequeue from specified queue and enqeueu to currQ
+                    else if (currentFront.compareTo(rear) > 0) {
+                        rear = currQ.remove();
+                        currQ.add(rear);
+                        if(list0Length > 0 && list1Length > 0) {
+                            if(currQ == list0) {
+                                list0Length--;
+                            }
+                            else {
+                                list1Length--;
+                            }
+                        }
+                    }
+                    //if alternateFront is greater than rear
+                    //dequeue from specified queue and enqeueu to currQ
+                    else if (alternateFront.compareTo(rear) > 0) {
+                        rear = (currQ == list0) ? list1.remove() : list0.remove();
+                        currQ.add(rear);
+                        if(list0Length > 0 && list1Length > 0) {
+                            if(currQ == list0) {
+                                list1Length--;
+                            }
+                            else {
+                                list0Length--;
+                            }
+                        }
+                    }
+                    //if neither are greater than rear
+                    //change over to other queue and reset rear
+                    else {
+                        currQ = ( currQ == list0 ) ? list1 : list0;
+                        rear = ""; //reset rear
+                    }
+                }
+            }
+        }
+
+        System.out.println();
+        System.out.println();
         while(list0.size() != 0) {
-            System.out.print(list0.delete() + " ");
+            System.out.print(list0.remove() + " ");
         }
 
         System.out.println();
 
         while(list1.size() != 0) {
-            System.out.print(list1.delete() + " ");
+            System.out.print(list1.remove() + " ");
         }
-
         System.out.println();
-
     }
-
-
-    public static void SortInput(Scanner file) { //sorts then prints input
-
-    }
-
 }
