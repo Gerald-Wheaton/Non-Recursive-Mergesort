@@ -75,12 +75,7 @@ public class sortit {
         /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
         //Queue sorting process
         String back = "", currentFront = "", alternateFront = ""; //representing the front of the current queeu and also the second Queue
-        int list0Length, list1Length, totalLength;
-
-        list0Length = list0.size();
-        list1Length = list1.size();
-        totalLength = list0Length + list1Length;
-        currQ = list0;
+        int list0Length, list1Length;
 
         //end loop once one queue is empty
         while(list0.size() != 0 && list1.size() != 0) {
