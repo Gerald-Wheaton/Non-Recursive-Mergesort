@@ -1,3 +1,6 @@
+//Gerald Wheaton
+//April 20, 2020
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -31,7 +34,7 @@ public class sortit {
                         System.out.print("Enter a word or 'q' to exit: ");
                         userInput = input.nextLine();
 
-                        if(!userInput.equals("q") && !userInput.equals("") && !userInput.equals("Q")) {
+                        if(!userInput.equals("q") && !userInput.equals("") && !userInput.equals("Q") && !userInput.equals(" ")) {
                             //currQ = (newItem.compareTo(rear) < 0) ? list0 : list1; //ternary operatot to switch lists when newItem is less than the rear elemnt of currQ
                             if (newItem.compareTo(rear) < 0) {
                                 if(currQ == list0) {
@@ -195,6 +198,7 @@ public class sortit {
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
 
+    //output section
         currQ = (list0.size() == 0) ? list1 : list0;
         //print Queue in reversed order if user specified
         if(reverseOrder == true) {
